@@ -1,0 +1,4 @@
+mysql
+htdocs
+php/certs/*
+!php/certs/*.example

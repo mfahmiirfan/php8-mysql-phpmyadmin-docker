@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+    php-apache-environment:
+        container_name: php-apache
+        build:
+            context: ./php
+            dockerfile: Dockerfile
+        depends_on:
+            - db
+        volumes:
+            - ./htdocs:/var/www/support.dev.sdi/
+            - ./config/php.ini:/usr/local/etc/php/php.ini
+            - /etc/localtime:/etc/localtime:ro
+        environment:
+            - "APACHE_LOG_DIR:/var/www/html/"
+        ports:
+            - 8000:443
+    db:
+        container_name: db
+        image: mariadb:10.4.28
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - ./mysql/data:/var/lib/mysql
+            - ./config/my.cnf:/etc/mysql/my.cnf
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - "9906:3306"
+    phpmyadmin:
+        image: phpmyadmin
+        restart: always
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - 8001:80
+        environment:
+            PMA_HOST: db
+            PMA_PORT: 3306
+            MYSQL_ROOT_PASSWORD: root
